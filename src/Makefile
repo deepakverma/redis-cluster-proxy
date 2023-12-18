@@ -101,6 +101,23 @@ endif
 endif
 endif
 endif
+
+# demikernel
+#ifneq ($(DEMIKERNEL_REPO_DIR),)
+export DEMIKERNEL_INCLUDE_DIR ?= $(DEMIKERNEL_REPO_DIR)/include
+export DEMIKERNEL_LIBOS_SO ?= $(DEMIKERNEL_REPO_DIR)/target/release/libdemikernel.so
+export DEMIKERNEL_LIBRARY_PATH ?= $(HOME)/lib:$(shell find $(HOME)/lib/ -name '*x86_64-linux-gnu*' -type d | xargs | sed -e 's/\s/:/g')
+
+$(info DEMIKERNEL_INCLUDE_DIR: $(DEMIKERNEL_INCLUDE_DIR))
+$(info DEMIKERNEL_LIBOS_SO: $(DEMIKERNEL_LIBOS_SO))
+$(info DEMIKERNEL_LIBRARY_PATH: $(DEMIKERNEL_LIBRARY_PATH))
+
+FINAL_CFLAGS+=-I $(DEMIKERNEL_INCLUDE_DIR) -D __DEMIKERNEL__
+FINAL_LDFLAGS+=-Wl,-rpath,$(DEMIKERNEL_LIBRARY_PATH)
+FINAL_LIBS+=$(DEMIKERNEL_LIBOS_SO)
+$(info FINAL_CFLAGS: $(FINAL_CFLAGS))
+#endif
+
 # Include paths to dependencies
 FINAL_CFLAGS+= -I../deps/hiredis
 
